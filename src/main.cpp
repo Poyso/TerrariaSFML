@@ -18,6 +18,8 @@ int main() {
   player.setPosition({pos_x, pos_y});
   dot.setFillColor(sf::Color::White);
   dot.setPosition({block.getPosition().x, block.getPosition().y + 100.f});
+  // std::cout << "x: " << block.getPoint(0).x << "y: " << block.getPoint(0).y
+  // << std::endl;
   while (window.isOpen()) {
     while (const std::optional event = window.pollEvent()) {
       if (event->is<sf::Event::Closed>()) {
@@ -26,19 +28,30 @@ int main() {
     }
     sf::FloatRect player_bounds = player.getGlobalBounds();
     sf::FloatRect block_bounds = block.getGlobalBounds();
+    bool right_side = (!block_bounds.contains(
+                          {player.getPosition().x, player.getPosition().y})) &&
+                      !block_bounds.contains({player.getPosition().x,
+                                              player.getPosition().y + 100});
+    bool left_side = (!player_bounds.contains(block.getPosition()) &&
+                      !player_bounds.contains({block.getPosition().x,
+                                               block.getPosition().y + 100}));
+    bool top_side = (!block_bounds.contains({player.getPosition().x,
+                                             player.getPosition().y + 100}) &&
+                     !block_bounds.contains({player.getPosition().x + 100,
+                                             player.getPosition().y + 100}));
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
       pos_x++;
       player.setPosition({pos_x, pos_y});
-    } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S)) {
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::S) && top_side) {
       pos_y++;
       player.setPosition({pos_x, pos_y});
-    } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::W)) {
       pos_y--;
       player.setPosition({pos_x, pos_y});
-    } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A) &&
-                   (!player_bounds.contains(
-                       {block.getPosition().x, block.getPosition().y + 100})) ||
-               !player_bounds.contains(block.getPosition())) {
+    }
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A) && right_side) {
       pos_x--;
       player.setPosition({pos_x, pos_y});
     }
